@@ -133,11 +133,11 @@ def get_branch_zips(content, folder_name, user_name=None, password=None, f=0):
                 continue
             end_time = datetime.now()
             db.add_to_table('dbo.InsertLogException', 'FAILED',
-                            "The " + folder_name + " chain failed in Exception: " + str(e), start_time, end_time)
+                            "The " + folder_name + " chain failed in Exception: " + str(e)+" in URL: "+content, start_time, end_time)
             if e == 'maximum recursion depth exceeded while calling a Python object':
                 return
             return None
-    f = web.read_new_zips(driver, name, f)
+    f = web.read_new_zips(driver, name, f, url)
     web.download_wait(full_name)
     clean_duplicate_folders(name)
     num_of_folders = len(os.listdir(name))

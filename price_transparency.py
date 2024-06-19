@@ -3,6 +3,9 @@ import glob
 import logging
 import pandas as pd
 from ast import literal_eval
+
+import requests
+
 import network_marketing
 import create_folder_per_market as f
 import insert_to_db as db
@@ -21,8 +24,24 @@ config.read("config.ini")
 # and downloads all PriceFull and Promofull zips that was upload in this day.
 # ==========================================================================================================================
 
+def internet_on():
+    try:
+        req = requests.head('http://www.google.com/', timeout=2)
+        # HTTP errors are not raised by default, this statement does that
+        req.raise_for_status()
+        return True
+    except requests.HTTPError as e:
+        print("Checking internet connection failed, status code {0}.".format(
+            e.response.status_code))
+        db.add_to_table('dbo.InsertLogException', 'FAILED', f'internet connection failed on: {str(e)}', datetime.now(), datetime.now())
+    except requests.ConnectionError:
+        print("No internet connection available.")
+        db.add_to_table('dbo.InsertLogException', 'FAILED', f'No internet connection available', datetime.now(), datetime.now())
+        return False
+
 
 def main():
+    internet_on()
     print('START!')
     start = datetime.now()
     global excel_table

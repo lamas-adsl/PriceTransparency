@@ -179,7 +179,7 @@ def end_page():
     pass
 
 
-def read_new_zips(driver, name, f=0, part=False, download_path=None):
+def read_new_zips(driver, name, f=0, part=False, download_path=None, url=None):
     """
     Base function that call to other functions. in the chain page, select to the current chain if was needs,
     select to promo/price if was needs, get the current type of button, go to the first button that need to download,
@@ -203,17 +203,19 @@ def read_new_zips(driver, name, f=0, part=False, download_path=None):
                 first_button = buttons[i]
                 i += 1
         if ".gz" not in first_button.text and 'הורדה' not in first_button.text:
+            if 'Stores' in first_button.text:
+                return
             links = driver.find_elements(By.XPATH,'//*/table/tbody/tr/td[contains(text(), "'+datetime.today().strftime('%Y-%m-%d')+'")]/parent::tr/td/'+type)
             for l in links:
                 if 'ncr' not in l.text and l.text != '':
                     l.click()
-                    read_new_zips(driver, name, download_path=download_path)
+                    read_new_zips(driver, name, download_path=download_path, url=url)
                     return
         index = 1
         x = 0
     except Exception as e:
         end_time = datetime.now()
-        db.add_to_table('dbo.InsertLogException', 'FAILED', "The "+name+" chain failed in Exception: "+str(e), start_time,
+        db.add_to_table('dbo.InsertLogException', 'FAILED', "The "+name+" chain failed in Exception: "+str(e)+" in URL: "+ url, start_time,
                         end_time)
         return
     while x < len(rows):
@@ -243,7 +245,7 @@ def read_new_zips(driver, name, f=0, part=False, download_path=None):
                     x = 0
                 except:
                     if part:
-                        read_new_zips(driver, name, download_path, part=part)
+                        read_new_zips(driver, name, download_path, part=part, url=url)
                     else:
                         download_wait(download_path)
                         return
@@ -279,7 +281,7 @@ def read_new_zips(driver, name, f=0, part=False, download_path=None):
                             rows = driver.find_elements(By.TAG_NAME, 'tr')
                     except:
                         if part:
-                            read_new_zips(driver, name, download_path, part=part)
+                            read_new_zips(driver, name, download_path, part=part, url=url)
                         else:
                             download_wait(download_path)
                             return
@@ -300,7 +302,7 @@ def read_new_zips(driver, name, f=0, part=False, download_path=None):
                         rows = driver.find_elements(By.TAG_NAME,'tr')
                     except:
                         if part:
-                            read_new_zips(driver, name, download_path, part=part)
+                            read_new_zips(driver, name, download_path, part=part, url=url)
                         else:
                             download_wait(download_path)
                             return f
