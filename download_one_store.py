@@ -1,10 +1,8 @@
-import os
 import time
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from datetime import date, datetime, timedelta
-import requests
 import read_market_web as web
 
 
@@ -17,30 +15,30 @@ def select_current_item(driver):
     try:
         driver.find_element(By.XPATH,
                             '//*/select/option[contains(text(),"מחסנים")or contains(text(),"סניפים")or contains(text(),"Stores")]').click()
-        get_row_to_click(driver, str_xpath='//*[@type="button" or @type="submit"]')
+        get_row_to_click(driver=driver, str_xpath='//*[@type="button" or @type="submit"]')
         time.sleep(2)
     except:
         pass
 
 
 def download_stores(driver, full_name):
-    select_current_item(driver)
+    select_current_item(driver=driver)
     d = date.today().strftime("-%Y%m%d")
     try:
-        typ, first_button = web.get_button_type(driver)
+        typ, first_button = web.get_button_type(driver=driver)
         str_xpath = f'//*/tr[./td[contains(text(),"Store") and contains(text(),"{d}")]]/td/{typ}'
-        get_row_to_click(driver, str_xpath)
+        get_row_to_click(driver=driver, str_xpath=str_xpath)
     except:
         try:
             str_xpath = f'//*/tr[./td[./{typ}[contains(text(),"Store")and contains(text(),"{d}")]]]/td/{typ}[./span]'
             try:
-                get_row_to_click(driver, str_xpath)
+                get_row_to_click(driver=driver, str_xpath=str_xpath)
             except:
                 yesterday = (date.today() + timedelta(days=-1)).strftime("-%Y%m%d")
                 str_xpath = str_xpath.replace(d, yesterday)
-                get_row_to_click(driver, str_xpath)
-            dowload_click = driver.find_elements(By.PARTIAL_LINK_TEXT, 'Download')
-            [dowload.click() for dowload in dowload_click]
+                get_row_to_click(driver=driver, str_xpath=str_xpath)
+            download_click = driver.find_elements(By.PARTIAL_LINK_TEXT, 'Download')
+            [download.click() for download in download_click]
         except:
             try:
                 """

@@ -1,17 +1,10 @@
-import ntpath
-import os
 import re
 import time
-import zipfile
-from datetime import datetime
-
 import read_market_web as wb
 from bs4 import BeautifulSoup
 import requests
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 import pandas as pd
-import wget
-import insert_to_db as db
 
 excel_name_file = "פירטי רישתות שיווק"
 full_table = None
@@ -117,8 +110,9 @@ def create_network_marketing_table(url):
                         passwords.append(p)
                 if "אין צורך" in p:
                     p = None
-            table = insert_value_to_table(table, name, valid, url, users, passwords)
+            table = insert_value_to_table(table=table, name=name, valid=valid, url=url,
+                                          user_name=users, password=passwords)
         else:
-            table = insert_value_to_table(table, name, valid, url)
+            table = insert_value_to_table(table=table, name=name, valid=valid, url=url)
     table.to_csv('markets_list.csv', encoding="ISO-8859-8")
     return table

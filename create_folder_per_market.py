@@ -137,13 +137,13 @@ def get_branch_zips(content, folder_name, user_name=None, password=None, f=0):
             if e == 'maximum recursion depth exceeded while calling a Python object':
                 return
             return None
-    f = web.read_new_zips(driver, name, f, url)
+    f = web.read_new_zips(driver=driver, name=name, part=f, url=url)
     web.download_wait(full_name)
     clean_duplicate_folders(name)
     num_of_folders = len(os.listdir(name))
 
     try:
-        download_stores.download_stores(driver, full_name)
+        download_stores.download_stores(driver=driver, full_name=full_name)
     except Exception as e:
         pass
 
@@ -208,13 +208,11 @@ def get_url_market(table):
                             per_passowrd = passowrd[i]
                 except:
                     per_passowrd = ''
-                get_branch_zips(ur, folder_name, per_user, per_passowrd)
+                get_branch_zips(content=ur, folder_name=folder_name, user_name=per_user, password=per_passowrd)
         else:
-            # 22/12/2022
-            # TODO Checks if there are two subchains in the url but doesn't check anymore
-            f = get_branch_zips(url[0], folder_name, user, passowrd)
+            f = get_branch_zips(content=url[0], folder_name=folder_name, user_name=user, password=passowrd)
             if f == 1:
-                get_branch_zips(url[0], folder_name, user, passowrd, f=1)
+                get_branch_zips(content=url[0], folder_name=folder_name, user_name=user, password=passowrd, f=1)
 
 
 def parse_to_table():

@@ -24,6 +24,7 @@ config.read("config.ini")
 # and downloads all PriceFull and Promofull zips that was upload in this day.
 # ==========================================================================================================================
 
+
 def internet_on():
     try:
         req = requests.head('http://www.google.com/', timeout=2)

@@ -1,4 +1,3 @@
-import os
 import time
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -23,26 +22,26 @@ def select_current_item(driver):
 
 
 def download_stores(driver, full_name):
-    select_current_item(driver)
+    select_current_item(driver=driver)
     d = datetime.today().strftime("-%Y%m%d")
     driver.implicitly_wait(4)
     try:
-        typ, first_button = web.get_button_type(driver, '')
+        typ, first_button = web.get_button_type(driver=driver, name='')
         str_xpath = f'//*/tr[./td[contains(text(),"Store") and contains(text(),"{d}")]]/td/{typ}'
-        rows = get_rows_to_download(driver, str_xpath)
+        rows = get_rows_to_download(driver=driver, str_xpath=str_xpath)
         [row.click() for row in rows]
     except:
         try:
             str_xpath = f'//*/tr[./td[./{typ}[contains(text(),"Store")and contains(text(),"{d}")]]]/td/{typ}[./span]'
             try:
-                rows = get_rows_to_download(driver, str_xpath)
+                rows = get_rows_to_download(driver=driver, str_xpath=str_xpath)
             except:
                 yesterday = (date.today() + timedelta(days=-1)).strftime("-%Y%m%d")
                 str_xpath = str_xpath.replace(d, yesterday)
-                rows = get_rows_to_download(driver, str_xpath)
+                rows = get_rows_to_download(driver=driver, str_xpath=str_xpath)
             [row.click() for row in rows]
-            dowload_click = driver.find_elements(By.PARTIAL_LINK_TEXT, 'Download')
-            [dowload.click() for dowload in dowload_click]
+            download_click = driver.find_elements(By.PARTIAL_LINK_TEXT, 'Download')
+            [download.click() for download in download_click]
         except:
             try:
                 """

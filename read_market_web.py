@@ -1,12 +1,7 @@
 import os.path
-import ntpath
-import shutil
 import subprocess
 import time
 import zipfile
-
-import patoolib
-import requests
 import wget
 from glob import glob
 from selenium import webdriver
@@ -20,9 +15,7 @@ import insert_to_db as db
 from get_chrome_driver import GetChromeDriver
 
 
-
 BASE_PATH = r'D:\Price_transparency_work'
-
 
 def get_chrome_version():
     try:
@@ -162,8 +155,8 @@ def get_button_type(driver, name, c=0):
         except NoSuchElementException:
             if c < 3:
                 time.sleep(8)
-                select_to_current_chain(driver, name)
-                type, button = get_button_type(driver, name, c=c+1)
+                select_to_current_chain(driver=driver, name=name)
+                type, button = get_button_type(driver=driver, name=name, c=c+1)
     return type, button
 
 
@@ -192,9 +185,9 @@ def read_new_zips(driver, name, f=0, part=False, download_path=None, url=None):
     start_time = datetime.now()
     try:
         time.sleep(5)
-        f = select_to_current_chain(driver, name, f)
-        part = select_to_price_or_promo_full(driver, part)
-        type, first_button = get_button_type(driver, name)
+        f = select_to_current_chain(driver=driver, name=name, f=f)
+        part = select_to_price_or_promo_full(driver=driver, part=part)
+        type, first_button = get_button_type(driver=driver, name=name)
         rows = driver.find_elements(By.TAG_NAME, 'tr')
         i = 1
         if first_button.text == '' or first_button.text == 'Parent Directory':
@@ -209,7 +202,7 @@ def read_new_zips(driver, name, f=0, part=False, download_path=None, url=None):
             for l in links:
                 if 'ncr' not in l.text and l.text != '':
                     l.click()
-                    read_new_zips(driver, name, download_path=download_path, url=url)
+                    read_new_zips(driver=driver, name=name, download_path=download_path, url=url)
                     return
         index = 1
         x = 0
@@ -245,7 +238,7 @@ def read_new_zips(driver, name, f=0, part=False, download_path=None, url=None):
                     x = 0
                 except:
                     if part:
-                        read_new_zips(driver, name, download_path, part=part, url=url)
+                        read_new_zips(driver=driver, name=name, download_path=download_path, part=part, url=url)
                     else:
                         download_wait(download_path)
                         return
@@ -275,13 +268,13 @@ def read_new_zips(driver, name, f=0, part=False, download_path=None, url=None):
                             driver.find_element(By.XPATH, '//*[text()=">"]').click()
                         x = 0
                         index = 1
-                        rows = driver.find_elements(By.TAG_NAME,'tr')
+                        rows = driver.find_elements(By.TAG_NAME, 'tr')
                         if len(rows) < 1:
                             print('Find 0 rows, try again')
                             rows = driver.find_elements(By.TAG_NAME, 'tr')
                     except:
                         if part:
-                            read_new_zips(driver, name, download_path, part=part, url=url)
+                            read_new_zips(driver=driver, name=name, download_path=download_path, part=part, url=url)
                         else:
                             download_wait(download_path)
                             return
@@ -302,7 +295,7 @@ def read_new_zips(driver, name, f=0, part=False, download_path=None, url=None):
                         rows = driver.find_elements(By.TAG_NAME,'tr')
                     except:
                         if part:
-                            read_new_zips(driver, name, download_path, part=part, url=url)
+                            read_new_zips(driver=driver, name=name, download_path=download_path, part=part, url=url)
                         else:
                             download_wait(download_path)
                             return f
